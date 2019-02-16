@@ -17,11 +17,11 @@ class Task():
         """
         # Simulation
         self.sim = PhysicsSim(init_pose, init_velocities, init_angle_velocities, runtime) 
-        self.action_repeat = 3
+        self.action_repeat = 1
 
         self.state_size = self.action_repeat * 6
-        self.action_low = 0
-        self.action_high = 900
+        self.action_low = 200
+        self.action_high = 800
         self.action_size = 4
 
         # Goal
@@ -33,11 +33,13 @@ class Task():
         ## reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
 
 
-        reward = 10 - sqrt(((self.target_pos[0] - self.sim.pose[0])**2)+((self.target_pos[1] - self.sim.pose[1])**2)+((self.target_pos[2] - self.sim.pose[2])**2))
+        #reward = 10 - sqrt(((self.target_pos[0] - self.sim.pose[0])**2)+((self.target_pos[1] - self.sim.pose[1])**2)+((self.target_pos[2] - self.sim.pose[2])**2))
        ## reward += -1*sum(abs(self.sim.angular_v))
 
         #if any(5<abs(self.target_pos - self.sim.pose[:3])):
           ##      reward = reward*5
+
+        reward = self.sim.pose[1]
 
         return reward
 
@@ -57,7 +59,10 @@ class Task():
             if any(100<abs(self.target_pos - self.sim.pose[:3])):
                 done=True
 
-            if self.sim.pose[2] < 0:
+            if self.sim.pose[1] > self.target_pos[1]:
+                done = True
+
+            if self.sim.pose[1] < 0:
                 done = True 
                 print("Fell!")
 
