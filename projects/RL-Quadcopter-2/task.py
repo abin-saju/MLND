@@ -1,7 +1,6 @@
 import numpy as np
 from physics_sim import PhysicsSim
-from math import sqrt
-
+from math import sqrt 
 class Task():
     """Task (environment) that defines the goal and provides feedback to the agent."""
     def __init__(self, init_pose=None, init_velocities=None, 
@@ -17,11 +16,11 @@ class Task():
         """
         # Simulation
         self.sim = PhysicsSim(init_pose, init_velocities, init_angle_velocities, runtime) 
-        self.action_repeat = 1
+        self.action_repeat = 3
 
         self.state_size = self.action_repeat * 6
-        self.action_low = 200
-        self.action_high = 800
+        self.action_low = 50
+        self.action_high = 900
         self.action_size = 4
 
         # Goal
@@ -30,41 +29,36 @@ class Task():
     def get_reward(self):
         """Uses current pose of sim to return reward."""
 
-        ## reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        reward = self.sim.pose[2]
 
+        if self.sim.pose[2] < 0:
+            reward = -1000
 
-        #reward = 10 - sqrt(((self.target_pos[0] - self.sim.pose[0])**2)+((self.target_pos[1] - self.sim.pose[1])**2)+((self.target_pos[2] - self.sim.pose[2])**2))
-       ## reward += -1*sum(abs(self.sim.angular_v))
+        #if self.sim.pose[0] <= 0:
+         #   reward = 1000 * self.sim.pose[0]
 
-        #if any(5<abs(self.target_pos - self.sim.pose[:3])):
-          ##      reward = reward*5
+        #if self.sim.pose[1] <= 0:
+         #   reward = 1000 * self.sim.pose[1]
 
-        reward = self.sim.pose[1]
-
+        #1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
         return reward
 
     def step(self, rotor_speeds):
         """Uses action to obtain next state, reward, done."""
         reward = 0
         pose_all = []
+        
         for _ in range(self.action_repeat):
+            #done = 
             self.sim.next_timestep(rotor_speeds) # update the sim pose and velocities
 
             done = False
 
-            if all(self.sim.pose[:3] == self.target_pos):
-                done = True
-                print("Here!")
-
-            if any(100<abs(self.target_pos - self.sim.pose[:3])):
-                done=True
-
-            if self.sim.pose[1] > self.target_pos[1]:
+            if any(100<abs(self.sim.pose[:3])):
                 done = True
 
-            if self.sim.pose[1] < 0:
-                done = True 
-                print("Fell!")
+            if self.sim.pose[2] >= self.target_pos[2]:
+                done = True
 
             reward += self.get_reward() 
             pose_all.append(self.sim.pose)
