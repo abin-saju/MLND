@@ -11,7 +11,9 @@ You can find the [capstone proposal rubric here](https://review.udacity.com/#!/r
 Please email [machine-support@udacity.com](mailto:machine-support@udacity.com) if you have any questions.
 
 **Code**
+
 The code was ran and tested usng Python 2.7, the requirements file for the conda environment is included.
 
 **Data**
+
 Data for this capstone was downloaded from https://www.kaggle.com/c/plant-seedlings-classification/data.
